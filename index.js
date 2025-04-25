@@ -13,7 +13,6 @@ app.use(express.json())
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster1.cpfzu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1`
-console.log('mongodb ', uri)
 
 // const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster1.cpfzu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1`;
 
@@ -33,6 +32,14 @@ async function run() {
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
+        const jobsCollection = client.db('jobsPortal').collection('jobs');
+
+        app.get('/jobs', async (req, res) => {
+            const cursor = jobsCollection.find();
+            const result = await cursor.toArray();
+            res.send(result)
+        })
+
     } finally {
         // Ensures that the client will close when you finish/error
         // await client.close();
